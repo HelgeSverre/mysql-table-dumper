@@ -108,5 +108,3 @@ This will:
 - Use your local copy of `dumper.sh` instead
 - Run through the configuration process
 - Create a working script in your current directory
-
-```
