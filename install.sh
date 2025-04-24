@@ -54,23 +54,32 @@ BASE_OUTPUT_DIR=${BASE_OUTPUT_DIR:-./db_dumps}
 TMP_FILE=$(mktemp)
 cat "$INSTALL_DIR/mysql-dumper.sh" > "$TMP_FILE"
 
+# Define exact patterns to match and replace
+# These need to be exactly as they appear in the dumper.sh file
+DB_USER_PATTERN='DB_USER="root"'
+DB_PASS_PATTERN='DB_PASS=""'
+DB_NAME_PATTERN='DB_NAME="db_name"'
+DB_HOST_PATTERN='DB_HOST="127.0.0.1"'
+DB_PORT_PATTERN='DB_PORT="3306"'
+BASE_DIR_PATTERN='BASE_OUTPUT_DIR="./db_dumps"'
+
 # Perform sed replacements based on platform
 if [[ "$OSTYPE" == "darwin"* ]]; then
     # macOS requires an empty string after -i
-    sed -i '' "s/DB_USER=\"root\"/DB_USER=\"$DB_USER\"/" "$TMP_FILE"
-    sed -i '' "s/DB_PASS=\"\"/DB_PASS=\"$DB_PASS\"/" "$TMP_FILE"
-    sed -i '' "s/DB_NAME=\"db_name\"/DB_NAME=\"$DB_NAME\"/" "$TMP_FILE"
-    sed -i '' "s/DB_HOST=\"127.0.0.1\"/DB_HOST=\"$DB_HOST\"/" "$TMP_FILE"
-    sed -i '' "s/DB_PORT=\"3306\"/DB_PORT=\"$DB_PORT\"/" "$TMP_FILE"
-    sed -i '' "s|BASE_OUTPUT_DIR=\"./db_dumps\"|BASE_OUTPUT_DIR=\"$BASE_OUTPUT_DIR\"|" "$TMP_FILE"
+    sed -i '' "s/$DB_USER_PATTERN/DB_USER=\"$DB_USER\"/" "$TMP_FILE"
+    sed -i '' "s/$DB_PASS_PATTERN/DB_PASS=\"$DB_PASS\"/" "$TMP_FILE"
+    sed -i '' "s/$DB_NAME_PATTERN/DB_NAME=\"$DB_NAME\"/" "$TMP_FILE"
+    sed -i '' "s/$DB_HOST_PATTERN/DB_HOST=\"$DB_HOST\"/" "$TMP_FILE"
+    sed -i '' "s/$DB_PORT_PATTERN/DB_PORT=\"$DB_PORT\"/" "$TMP_FILE"
+    sed -i '' "s|$BASE_DIR_PATTERN|BASE_OUTPUT_DIR=\"$BASE_OUTPUT_DIR\"|" "$TMP_FILE"
 else
     # Linux and other platforms
-    sed -i "s/DB_NAME=\"db_name\"/DB_NAME=\"$DB_NAME\"/" "$TMP_FILE"
-    sed -i "s/DB_USER=\"root\"/DB_USER=\"$DB_USER\"/" "$TMP_FILE"
-    sed -i "s/DB_PASS=\"\"/DB_PASS=\"$DB_PASS\"/" "$TMP_FILE"
-    sed -i "s/DB_HOST=\"127.0.0.1\"/DB_HOST=\"$DB_HOST\"/" "$TMP_FILE"
-    sed -i "s/DB_PORT=\"3306\"/DB_PORT=\"$DB_PORT\"/" "$TMP_FILE"
-    sed -i "s|BASE_OUTPUT_DIR=\"./db_dumps\"|BASE_OUTPUT_DIR=\"$BASE_OUTPUT_DIR\"|" "$TMP_FILE"
+    sed -i "s/$DB_USER_PATTERN/DB_USER=\"$DB_USER\"/" "$TMP_FILE"
+    sed -i "s/$DB_PASS_PATTERN/DB_PASS=\"$DB_PASS\"/" "$TMP_FILE"
+    sed -i "s/$DB_NAME_PATTERN/DB_NAME=\"$DB_NAME\"/" "$TMP_FILE"
+    sed -i "s/$DB_HOST_PATTERN/DB_HOST=\"$DB_HOST\"/" "$TMP_FILE"
+    sed -i "s/$DB_PORT_PATTERN/DB_PORT=\"$DB_PORT\"/" "$TMP_FILE"
+    sed -i "s|$BASE_DIR_PATTERN|BASE_OUTPUT_DIR=\"$BASE_OUTPUT_DIR\"|" "$TMP_FILE"
 fi
 
 # Move temp file back to final destination
