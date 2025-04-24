@@ -6,14 +6,14 @@
 #=====================================================
 
 # ====== DATABASE CONNECTION PARAMETERS ======
-DB_USER="root"        # MySQL username
-DB_PASS=""            # MySQL password (blank if none)
-DB_NAME="db_name"     # Target database to dump
-DB_HOST="127.0.0.1"   # Database host (localhost IP)
-DB_PORT="3306"        # MySQL port
+DB_USER="root"      # MySQL username
+DB_PASS=""          # MySQL password (blank if none)
+DB_NAME="db_name"   # Target database to dump
+DB_HOST="127.0.0.1" # Database host (localhost IP)
+DB_PORT="3306"      # MySQL port
 
 # ====== OUTPUT CONFIGURATION ======
-BASE_OUTPUT_DIR="./db_dumps"  # Base output directory (configurable)
+BASE_OUTPUT_DIR="./db_dumps" # Base output directory (configurable)
 TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
 OUTPUT_DIR="${BASE_OUTPUT_DIR}/${TIMESTAMP}"
 TOTAL_TABLES=0
@@ -21,22 +21,22 @@ DUMPED_TABLES=0
 
 # ====== OUTPUT FUNCTIONS ======
 print_header() {
-  echo "=================================================="
-  echo "  MySQL Table Dumper - Starting Operation"
-  echo "=================================================="
+    echo "=================================================="
+    echo "  MySQL Table Dumper - Starting Operation"
+    echo "=================================================="
 }
 
 print_success() {
-  echo "=================================================="
-  echo "  Dump Completed Successfully!"
-  echo "  Location: $OUTPUT_DIR"
-  echo "  Tables Dumped: $DUMPED_TABLES/$TOTAL_TABLES"
-  echo "=================================================="
+    echo "=================================================="
+    echo "  Dump Completed Successfully!"
+    echo "  Location: $OUTPUT_DIR"
+    echo "  Tables Dumped: $DUMPED_TABLES/$TOTAL_TABLES"
+    echo "=================================================="
 }
 
 print_error() {
-  echo "ERROR: $1"
-  exit 1
+    echo "ERROR: $1"
+    exit 1
 }
 
 # Function to format size in human-readable format
@@ -56,11 +56,10 @@ format_size() {
 # ====== MAIN SCRIPT ======
 print_header
 
-
 # Test database connection
 echo "Testing connection to MySQL server..."
-if ! mysql -u "$DB_USER" --password="$DB_PASS" -h "$DB_HOST" -P "$DB_PORT" -e "USE $DB_NAME" 2>/dev/null; then
-  print_error "Cannot connect to MySQL. Please check if server is running and credentials are correct."
+if ! mysql -u "$DB_USER" --password="$DB_PASS" -h "$DB_HOST" -P "$DB_PORT" -e "USE $DB_NAME" 2> /dev/null; then
+    print_error "Cannot connect to MySQL. Please check if server is running and credentials are correct."
 fi
 echo "Connection successful!"
 
@@ -70,11 +69,11 @@ echo "Created dump directory: $OUTPUT_DIR"
 
 # Get list of all tables in the database
 echo "Retrieving table list..."
-TABLES=$(mysql -u "$DB_USER" --password="$DB_PASS" -h "$DB_HOST" -P "$DB_PORT" --skip-column-names -e "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='$DB_NAME'" 2>/dev/null)
+TABLES=$(mysql -u "$DB_USER" --password="$DB_PASS" -h "$DB_HOST" -P "$DB_PORT" --skip-column-names -e "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_SCHEMA='$DB_NAME'" 2> /dev/null)
 
 # Check if tables were found
 if [ -z "$TABLES" ]; then
-  print_error "No tables found in database $DB_NAME"
+    print_error "No tables found in database $DB_NAME"
 fi
 
 # Count total tables
@@ -97,7 +96,7 @@ for TABLE in $TABLES; do
             INFORMATION_SCHEMA.TABLES
         WHERE
             TABLE_SCHEMA='$DB_NAME' AND
-            TABLE_NAME='$TABLE';" 2>/dev/null)
+            TABLE_NAME='$TABLE';" 2> /dev/null)
 
     ROW_COUNT=$(echo $TABLE_INFO | cut -d' ' -f1)
     SIZE_BYTES=$(echo $TABLE_INFO | cut -d' ' -f2)
@@ -112,7 +111,7 @@ for TABLE in $TABLES; do
     START_TIME=$(date +%s)
 
     # Dump the table
-    if mysqldump -u "$DB_USER" --password="$DB_PASS" -h "$DB_HOST" -P "$DB_PORT" "$DB_NAME" "$TABLE" 2>/dev/null > "$OUTPUT_DIR/$TABLE.sql"; then
+    if mysqldump -u "$DB_USER" --password="$DB_PASS" -h "$DB_HOST" -P "$DB_PORT" "$DB_NAME" "$TABLE" 2> /dev/null > "$OUTPUT_DIR/$TABLE.sql"; then
         # Calculate duration in seconds
         END_TIME=$(date +%s)
         DURATION=$((END_TIME - START_TIME))
